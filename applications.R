@@ -24,6 +24,22 @@ source('ssjExp_mle.R')
 source('auto_ssjExp.R')
 
 
+## Funzioni ausiliarie ####
+
+keep_first_adjacent <- function(x) {
+  x[c(TRUE, diff(x) != 1)]
+}
+
+keep_last_adjacent <- function(x) {
+  x[c(diff(x) != 1, TRUE)]
+}
+
+#prova <- c(34, 35, 38, 39, 42, 46, 47, 48, 83, 84)
+#keep_first_adjacent(prova)
+#keep_last_adjacent(prova)
+
+
+
 
 # CARICAMENTO DATI ####
 library(openxlsx)
@@ -267,7 +283,7 @@ axis(1, seq(1,length(x)+1, by=20), seq(2000,2025, by=5))
 lines(smooth$x,smooth$y,col='black',lty=6,lwd=2)
 
 lines(x=x,y=ssj$smoothed_level,col='black',lty=1,lwd=2)
-rect(x[which(ssj$sigmas>0)-1], par("usr")[3], x[which(ssj$sigmas>0)], par("usr")[4],
+rect(x[keep_first_adjacent(which(ssj$sigmas>0)-1)], par("usr")[3], x[keep_last_adjacent(which(ssj$sigmas>0))], par("usr")[4],
      col = rgb(0, 0, 0, 0.1), border = NA)
 if (save) dev.off()
 
@@ -330,7 +346,7 @@ lines(x=x,y=ssj$smoothed_level,col='black',lty=2,lwd=2)
 #rect(x[which(ssj$sigmas>0)-1], par("usr")[3], x[which(ssj$sigmas>0)], par("usr")[4],
 #     col = rgb(0, 0, 0, 0.1), border = NA)
 lines(x=x,y=ssjAlt$smoothed_level,col='black',lty=1,lwd=2)
-rect(x[which(ssjAlt$sigmas>0)-1], par("usr")[3], x[which(ssjAlt$sigmas>0)], par("usr")[4],
+rect(x[keep_first_adjacent(which(ssjAlt$sigmas>0)-1)], par("usr")[3], x[keep_last_adjacent(which(ssjAlt$sigmas>0))], par("usr")[4],
      col = rgb(0, 0, 0, 0.1), border = NA)
 if (save) dev.off()
 
@@ -502,7 +518,7 @@ plot(x,y, type='l',xlab='',ylab='', xaxt='n')
 axis(1, seq(1,length(x)+1, by=9), seq(1971,2025, by=9))
 lines(smooth$x,smooth$y,col='black',lty=6,lwd=2)
 lines(x=x,y=ssj$smoothed_level,col='black',lwd=2)
-rect(x[which(ssj$sigmas>0)-1], par("usr")[3], x[which(ssj$sigmas>0)], par("usr")[4],
+rect(x[keep_first_adjacent(which(ssj$sigmas>0)-1)], par("usr")[3], x[keep_last_adjacent(which(ssj$sigmas>0))], par("usr")[4],
      col = rgb(0, 0, 0, 0.1), border = NA)
 if (save) dev.off()
 
@@ -658,7 +674,7 @@ plot(x,y, xlab='Tempo',ylab='Accelerazione', cex=.7)
 #rect(c(14.2,32), par("usr")[3], c(22.7,par("usr")[2]), par("usr")[4],
 rect(c(0,22.7), par("usr")[3], c(14.2,32), par("usr")[4],
      col = rgb(0, 0, 0, 0.1), border = NA)
-abline(v=c(14.2,22.7,32,par("usr")[2]),lty=3,lwd=2)
+abline(v=c(14.2,22.7,32),lty=3,lwd=2)
 lines(smooth$x,smooth$y,col='black',lwd=1.5)
 if (save) dev.off()
 
@@ -671,7 +687,7 @@ plot(x,y, xlab='',ylab='', cex=.7)
 lines(x=ssj$x,y=ssj$smoothed_level,col='black',lwd=1.5)
 rect(x[which(ssj$sigmas>0)-1], par("usr")[3], x[which(ssj$sigmas>0)], par("usr")[4],
      col = rgb(0, 0, 0, 0.1), border = NA)
-abline(v=c(14.2,22.7,32,par("usr")[2]),lty=3,lwd=2)
+abline(v=c(14.2,22.7,32),lty=3,lwd=2)
 if (save) dev.off()
 
 # altri metodi
@@ -913,12 +929,15 @@ lines(x=x,y=ssj$smoothed_level,lwd=2)
 if (save) dev.off()
 
 if (save) pdf("mais_smoothComp.pdf",width=6, height=3)
-par(mar=c(1,2,1,1))
+par(mar=c(2,2,1,1))
 par(mfrow=c(1,3))
 plot(x,y, type='l', xlab='',ylab='',xaxt='n', ylim=c(195,405))
-par(mar=c(1,1,1,1))
+axis(1, years_ndx, years)
+par(mar=c(2,1,1,1))
 plot(smooth$x,smooth$y,lwd=2,type='l', xlab='',ylab='',xaxt='n',yaxt='n', ylim=c(190,420))
+axis(1, years_ndx, years)
 plot(x=x,y=ssj$smoothed_level,lwd=2,type='l', xlab='',ylab='',xaxt='n',yaxt='n', ylim=c(190,420))
+axis(1, years_ndx, years)
 par(mfrow=c(1,1))
 if (save) dev.off()
 
